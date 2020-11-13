@@ -6,16 +6,18 @@ class Player:
 
     def __init__(self):
         self.memory = {}
+        self.memory_used = True
         self.id = Player.id
         self.score = 0
         Player.id += 1
 
     def update(self, opponent, opponent_answer, award):
-        if opponent_answer == COOPERATE:
-            self.memory[opponent.id] = Memory.TRUSTWORTHY
-        else:
-            self.memory[opponent.id] = Memory.UNTRUSTWORTHY
         self.score += award
+        if self.memory_used:
+            if opponent_answer == COOPERATE:
+                self.memory[opponent.id] = Memory.TRUSTWORTHY
+            else:
+                self.memory[opponent.id] = Memory.UNTRUSTWORTHY
 
     def name(self):
         return type(self).__name__
