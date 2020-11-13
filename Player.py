@@ -13,7 +13,7 @@ class Player:
     # def answer(self, opponent)
 
     def update(self, opponent, opponent_answer, award):
-        print(self.name(), "me:", self.id, "opponent:", opponent.id, opponent_answer)
+        # print(self.name(), "me:", self.id, "opponent:", opponent.id, opponent_answer)
         if opponent_answer == COOPERATE:
             self.memory[opponent.id] = Memory.TRUSTWORTHY
             # print("trusting")
