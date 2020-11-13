@@ -16,7 +16,6 @@ class TitForTat(Player):
     def answer(self, opponent):
         trust = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
         if trust == Memory.TRUSTWORTHY:
-            # print("I trust you", opponent.name(), opponent.id, self.memory.get(opponent.id))
             return COOPERATE
         else:
             return DEFECT

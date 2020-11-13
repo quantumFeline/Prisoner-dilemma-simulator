@@ -1,8 +1,10 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from consts import *
 from player_types import PLAYER_TYPES, PLAYER_NAMES
+from tqdm import tqdm
 
 AWARDS = {(COOPERATE, COOPERATE): (3, 3),
           (COOPERATE, DEFECT): (0, 5),
@@ -10,13 +12,12 @@ AWARDS = {(COOPERATE, COOPERATE): (3, 3),
           (DEFECT, DEFECT): (1, 1)}
 
 PROBABILITIES = [0.1, 0.2, 0.7]
-QUANTITIES = [1, 2, 7]
+QUANTITIES = [2, 2, 6]
 
 
 def play_round(player1, player2):
     answer1 = player1.answer(player2)
     answer2 = player2.answer(player1)
-    # print(player1.state(), answer1, player2.state(), answer2)
     award1, award2 = AWARDS[(answer1, answer2)]
     player1.update(player2, answer2, award1)
     player2.update(player1, answer1, award2)
@@ -27,7 +28,7 @@ def create_random_player():
 
 
 class Aquarium:
-    def __init__(self, n = 10, random = False, quantities=None, p=None):
+    def __init__(self, n=10, random=False, quantities=None, p=None):
 
         if random:
             self.players = np.array([player() for player in np.random.choice(PLAYER_TYPES, size=n, p=p)])
@@ -74,32 +75,31 @@ class Aquarium:
 def simulate(quantities=None, rounds=10):
     aquarium = Aquarium(quantities=quantities)
     aquarium.play_random_round(rounds=rounds)
-    # aquarium.show_statistic()
     return aquarium.get_averages()
 
 
-# aquarium = Aquarium(quantities=QUANTITIES)
-
 PLAYERS_N = sum(QUANTITIES)
-MAX_ROUNDS = int(1e2)
+MAX_ROUNDS = int(5e2)
 game_logs = {player_name: np.zeros((MAX_ROUNDS,)) for player_name in PLAYER_NAMES}
 
-for rounds in range(MAX_ROUNDS):
+for rounds in tqdm(range(MAX_ROUNDS)):
     result = simulate(QUANTITIES, rounds)
 
     for player_name in PLAYER_NAMES:
         game_logs[player_name][rounds] = result.get(player_name, 0)
 
-print(game_logs)
-
 fig, ax = plt.subplots()
-fig.suptitle(f'Results of aquarium simulations for {PLAYERS_N} players: {QUANTITIES}')
+sup_title = f'Results of aquarium simulation for {PLAYERS_N} players: {QUANTITIES} and {MAX_ROUNDS} max rounds'
+fig.suptitle(sup_title)
 ax.set_xlabel('Rounds played')
 ax.set_ylabel('Average scores')
 
 for player_name in PLAYER_NAMES:
-    # averaged_logs =
-    ax.scatter(range(MAX_ROUNDS), game_logs[player_name], label=player_name)
+    game_logs_pd = pd.Series(game_logs[player_name])
+    averaged_logs = game_logs_pd.rolling(10).mean()
+    ax.plot(range(MAX_ROUNDS), averaged_logs, label=player_name + " averaged")
+    ax.scatter(range(MAX_ROUNDS)[::20], game_logs[player_name][::20], label=player_name)
 
 ax.legend()
+plt.savefig(f'results/{sup_title}.svg')
 plt.show()
