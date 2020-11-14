@@ -40,10 +40,8 @@ class Aquarium:
                 self.players = np.concatenate([np.array([player() for _ in range(quantities[i])])
                                                         for i, player in enumerate(PLAYER_TYPES)], axis=0)
 
-        # print(self.players)
         self.types_n = {player_name: sum([player.name() == player_name for player in self.players])
                         for player_name in PLAYER_NAMES}
-        # print(self.types_n)
 
     def play_random_round(self, rounds=1):
         for _ in range(rounds):
@@ -80,6 +78,7 @@ def simulate(quantities=None, rounds=10):
 
 PLAYERS_N = sum(QUANTITIES)
 MAX_ROUNDS = int(5e2)
+WINDOW = int(MAX_ROUNDS/15)
 game_logs = {player_name: np.zeros((MAX_ROUNDS,)) for player_name in PLAYER_NAMES}
 
 for rounds in tqdm(range(MAX_ROUNDS)):
@@ -96,9 +95,9 @@ ax.set_ylabel('Average scores')
 
 for player_name in PLAYER_NAMES:
     game_logs_pd = pd.Series(game_logs[player_name])
-    averaged_logs = game_logs_pd.rolling(10).mean()
+    averaged_logs = game_logs_pd.rolling(WINDOW).mean()
     ax.plot(range(MAX_ROUNDS), averaged_logs, label=player_name + " averaged")
-    ax.scatter(range(MAX_ROUNDS)[::20], game_logs[player_name][::20], label=player_name)
+    ax.scatter(range(MAX_ROUNDS)[::WINDOW], game_logs[player_name][::WINDOW], label=player_name)
 
 ax.legend()
 plt.savefig(f'results/{sup_title}.svg')
