@@ -8,5 +8,10 @@ class Memory(Enum):
     NONE = -1
 
 
+class Modes(Enum):
+    PROBABILITY = 1
+    QUANTITY = 2
+
+
 COOPERATE = True
 DEFECT = False

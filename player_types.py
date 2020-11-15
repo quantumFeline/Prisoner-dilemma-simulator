@@ -27,7 +27,3 @@ class TitForTat(Player):
             return COOPERATE
         else:
             return DEFECT
-
-
-PLAYER_TYPES = [Cooperator, Defector, TitForTat]
-PLAYER_NAMES = [player().name() for player in PLAYER_TYPES]

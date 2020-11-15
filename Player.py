@@ -7,12 +7,14 @@ class Player:
     def __init__(self):
         self.memory = {}
         self.memory_used = True
+        self.rounds_played = 0
         self.id = Player.id
         self.score = 0
         Player.id += 1
 
     def update(self, opponent, opponent_answer, award):
         self.score += award
+        self.rounds_played += 1
         if self.memory_used:
             if opponent_answer == COOPERATE:
                 self.memory[opponent.id] = Memory.TRUSTWORTHY
