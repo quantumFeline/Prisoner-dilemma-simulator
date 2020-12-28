@@ -18,6 +18,7 @@ class Aquarium:
 
         else:
             if not quantities:
+                # TODO
                 raise NotImplementedError("Need to use about-even quantities of players")
             else:
                 self.players = np.concatenate([np.array([player() for _ in range(quantities[i])])

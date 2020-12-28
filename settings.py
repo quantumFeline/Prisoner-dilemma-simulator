@@ -4,7 +4,7 @@ from player_types import *
 
 PLAYER_TYPES = [Cooperator, Defector, TitForTat]
 MODE = Modes.QUANTITY
-MAX_ROUNDS = int(5e2)
+MAX_ROUNDS = int(2e2)
 
 AWARDS = {(COOPERATE, COOPERATE): (3, 3),
           (COOPERATE, DEFECT): (0, 5),

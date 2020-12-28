@@ -4,9 +4,9 @@ from consts import *
 class Player:
     id = 0
 
-    def __init__(self):
+    def __init__(self, memory_used=True):
         self.memory = {}
-        self.memory_used = True
+        self.memory_used = memory_used
         self.rounds_played = 0
         self.id = Player.id
         self.score = 0
