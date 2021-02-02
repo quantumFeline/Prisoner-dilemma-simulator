@@ -11,6 +11,7 @@ def create_random_player():
 
 
 class Aquarium:
+
     def __init__(self, n=10, randomised=False, quantities=None, p=None):
 
         if randomised:
@@ -18,10 +19,14 @@ class Aquarium:
 
         else:
             if not quantities:
-                # TODO
-                raise NotImplementedError("Need to use about-even quantities of players")
-            else:
-                self.players = np.concatenate([np.array([player() for _ in range(quantities[i])])
+                # Generate about-even quantities for each player.
+                # Careful - the difference might turn out to be significant
+                # if the total quantity is small.
+                types_n = len(PLAYER_TYPES)
+                quantities = [n//types_n] * types_n
+                quantities[-1] = n - (n // types_n * types_n)
+
+            self.players = np.concatenate([np.array([player() for _ in range(quantities[i])])
                                                for i, player in enumerate(PLAYER_TYPES)], axis=0)
 
         self.sums = {player_name: 0 for player_name in PLAYER_NAMES}
@@ -29,7 +34,7 @@ class Aquarium:
                         for player_name in PLAYER_NAMES}
         self.rounds_played = 0
 
-    def play_round(self, player1, player2):
+    def _play_round(self, player1, player2):
         answer1 = player1.answer(player2)
         answer2 = player2.answer(player1)
 
@@ -43,13 +48,13 @@ class Aquarium:
 
         self.rounds_played += 1
 
+    def _get_sums(self):
+        return self.sums
+
     def play_random_rounds(self, rounds_to_play=1):
         for _ in range(rounds_to_play):
             players = np.random.choice(self.players, size=2, replace=False)
-            self.play_round(*players)
-
-    def get_sums(self):
-        return self.sums
+            self._play_round(*players)
 
     def get_averages(self):
         return {player_name: (self.sums[player_name] / self.types_n[player_name]
@@ -61,7 +66,7 @@ class Aquarium:
             print(player.name(), player.score)
 
     def show_statistic(self):
-        sums = self.get_sums()
+        sums = self._get_sums()
         for player_name in PLAYER_NAMES:
             if self.types_n[player_name] != 0:
                 print(f"{player_name}: SUM = {sums[player_name]}, AVG={sums[player_name] / self.types_n[player_name]}")

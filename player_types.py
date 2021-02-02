@@ -1,25 +1,19 @@
 from consts import *
-from Player import Player
+from Player import Player, PlayerWithMemory
 from numpy.random import randint
 
 
 class Cooperator(Player):
-    def __init__(self):
-        super().__init__(False)
-
     def answer(self, opponent):
         return COOPERATE
 
 
 class Defector(Player):
-    def __init__(self):
-        super().__init__(False)
-
     def answer(self, opponent):
         return DEFECT
 
 
-class TitForTat(Player):
+class TitForTat(PlayerWithMemory):
     def answer(self, opponent):
         trust = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
         if trust == Memory.TRUSTWORTHY:
@@ -28,7 +22,7 @@ class TitForTat(Player):
             return DEFECT
 
 
-class ForgivingTitForTat(Player):
+class ForgivingTitForTat(PlayerWithMemory):
     def answer(self, opponent):
         trust = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
         if trust == Memory.TRUSTWORTHY or trust == Memory.HALF_TRUSTWORTHY:
@@ -44,9 +38,7 @@ class ForgivingTitForTat(Player):
         if old_memory == Memory.TRUSTWORTHY and new_memory == Memory.UNTRUSTWORTHY:
             self.memory[opponent.id] = Memory.HALF_TRUSTWORTHY
 
-class SoRandom(Player):
-    def __init__(self):
-        super().__init__(False)
 
+class SoRandom(Player):
     def answer(self, opponent):
         return COOPERATE if randint(2) == 1 else DEFECT
