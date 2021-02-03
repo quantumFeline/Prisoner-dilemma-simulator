@@ -14,6 +14,7 @@ class Defector(Player):
 
 
 class TitForTat(PlayerWithMemory):
+
     def answer(self, opponent):
         trust = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
         if trust == Memory.TRUSTWORTHY:
@@ -23,6 +24,7 @@ class TitForTat(PlayerWithMemory):
 
 
 class ForgivingTitForTat(PlayerWithMemory):
+
     def answer(self, opponent):
         trust = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
         if trust == Memory.TRUSTWORTHY or trust == Memory.HALF_TRUSTWORTHY:
@@ -30,13 +32,18 @@ class ForgivingTitForTat(PlayerWithMemory):
         else:
             return DEFECT
 
-    def update(self, opponent, opponent_answer, award):
-        old_memory =  self.memory.get(opponent.id, Memory.TRUSTWORTHY)
-        super().update(opponent, opponent_answer, award)
-        new_memory = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
+    def update_memory(self, opponent, opponent_answer):
 
-        if old_memory == Memory.TRUSTWORTHY and new_memory == Memory.UNTRUSTWORTHY:
+        prev_memory = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
+
+        if opponent_answer == COOPERATE:
+            self.memory[opponent.id] = Memory.TRUSTWORTHY
+
+        elif prev_memory == Memory.TRUSTWORTHY and opponent_answer == DEFECT:
             self.memory[opponent.id] = Memory.HALF_TRUSTWORTHY
+
+        else:
+            self.memory[opponent.id] = Memory.UNTRUSTWORTHY
 
 
 class SoRandom(Player):
