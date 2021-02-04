@@ -8,10 +8,11 @@ class Memory(Enum):
     NONE = -1
 
 
-class Modes(Enum):
+class Mode(Enum):
     PROBABILITY = 1
     QUANTITY = 2
 
 
-COOPERATE = True
-DEFECT = False
+class Answer(Enum):
+    COOPERATE = True
+    DEFECT = False

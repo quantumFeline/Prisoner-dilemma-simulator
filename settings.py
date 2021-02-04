@@ -3,7 +3,7 @@ from player_types import *
 # Main parameters.
 
 PLAYER_TYPES = [Cooperator, Defector, TitForTat]
-MODE = Modes.QUANTITY
+MODE = Mode.QUANTITY
 MAX_ROUNDS = int(5e2)
 
 # Set up one, depending on mode. This determines the number of players in the game.

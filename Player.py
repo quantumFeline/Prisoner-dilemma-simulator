@@ -12,11 +12,14 @@ class Player:
         self.score = 0
         Player.id += 1
 
-    def update(self, opponent, opponent_answer, award, aquarium=None):
+    def update(self, opponent: 'Player', opponent_answer: Answer, award, aquarium=None):
         self.score += award
         self.rounds_played += 1
         if aquarium:
             aquarium.sum_per_team[self.name()] += award
+
+    def answer(self, player: 'Player'):
+        return Answer.COOPERATE
 
     def name(self):
         return type(self).__name__
@@ -37,7 +40,7 @@ class PlayerWithMemory(Player):
 
     def update_memory(self, opponent, opponent_answer):
         # Default describes Tit-for-Tat behaviour.
-        if opponent_answer == COOPERATE:
+        if opponent_answer == Answer.COOPERATE:
             self.memory[opponent.id] = Memory.TRUSTWORTHY
         else:
             self.memory[opponent.id] = Memory.UNTRUSTWORTHY

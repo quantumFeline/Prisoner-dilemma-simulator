@@ -6,18 +6,16 @@ from settings import *
 from tqdm import tqdm
 
 
-def create_random_player():
-    return random.choice(PLAYER_TYPES)()
-
-
 class Automaton:
+    """A class that organizes matches between players
+    and updates their scores.
+    """
+    DEFAULT_AWARDS = {(Answer.COOPERATE, Answer.COOPERATE): (3, 3),
+                      (Answer.COOPERATE, Answer.DEFECT): (0, 5),
+                      (Answer.DEFECT, Answer.COOPERATE): (5, 0),
+                      (Answer.DEFECT, Answer.DEFECT): (1, 1)}
 
-    DEFAULT_AWARDS = {(COOPERATE, COOPERATE): (3, 3),
-                      (COOPERATE, DEFECT): (0, 5),
-                      (DEFECT, COOPERATE): (5, 0),
-                      (DEFECT, DEFECT): (1, 1)}
-
-    def __init__(self, aquarium=None, awards=None):
+    def __init__(self, aquarium: 'Aquarium' = None, awards: dict = None) -> None:
         if awards:
             self.AWARDS = awards
         else:
@@ -25,12 +23,9 @@ class Automaton:
 
         self.aquarium = aquarium
 
-    def play_round(self, player1, player2):
+    def play_round(self, player1: Player, player2: Player):
         answer1 = player1.answer(player2)
         answer2 = player2.answer(player1)
-
-        # print(self.AWARDS)
-        # print(self.AWARDS.get((answer1,answer2)))
 
         award1, award2 = self.AWARDS[(answer1, answer2)]
 
@@ -51,11 +46,11 @@ class Aquarium:
                 # Careful - the difference might turn out to be significant
                 # if the total quantity is small.
                 types_n = len(PLAYER_TYPES)
-                quantities = [n//types_n] * types_n
+                quantities = [n // types_n] * types_n
                 quantities[-1] = n - (n // types_n * types_n)
 
             self.players = np.concatenate([np.array([player() for _ in range(quantities[i])])
-                                               for i, player in enumerate(PLAYER_TYPES)], axis=0)
+                                           for i, player in enumerate(PLAYER_TYPES)], axis=0)
 
         self.sum_per_team = {player_name: 0 for player_name in PLAYER_TYPE_NAMES}
         self.types_n = {player_name: sum([player.name() == player_name for player in self.players])
@@ -87,10 +82,11 @@ class Aquarium:
         sums = self._get_sums()
         for player_name in PLAYER_TYPE_NAMES:
             if self.types_n[player_name] != 0:
-                print(f"{player_name}: SUM = {sums[player_name]}, AVG={sums[player_name] / self.types_n[player_name]}")
+                print(f"{player_name}: SUM = {sums[player_name]}, "
+                      f"AVG={sums[player_name] / self.types_n[player_name]}")
 
 
-def simulate(quantities=None, rounds_to_play=10):
+def simulate(quantities: list = None, rounds_to_play: int = 10):
     aquarium = Aquarium(quantities=quantities)
     aquarium.play_random_rounds(rounds_to_play=rounds_to_play)
     return aquarium.get_averages()

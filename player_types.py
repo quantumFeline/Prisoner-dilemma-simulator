@@ -5,12 +5,12 @@ from numpy.random import randint
 
 class Cooperator(Player):
     def answer(self, opponent):
-        return COOPERATE
+        return Answer.COOPERATE
 
 
 class Defector(Player):
     def answer(self, opponent):
-        return DEFECT
+        return Answer.DEFECT
 
 
 class TitForTat(PlayerWithMemory):
@@ -18,9 +18,9 @@ class TitForTat(PlayerWithMemory):
     def answer(self, opponent):
         trust = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
         if trust == Memory.TRUSTWORTHY:
-            return COOPERATE
+            return Answer.COOPERATE
         else:
-            return DEFECT
+            return Answer.DEFECT
 
 
 class ForgivingTitForTat(PlayerWithMemory):
@@ -28,18 +28,18 @@ class ForgivingTitForTat(PlayerWithMemory):
     def answer(self, opponent):
         trust = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
         if trust == Memory.TRUSTWORTHY or trust == Memory.HALF_TRUSTWORTHY:
-            return COOPERATE
+            return Answer.COOPERATE
         else:
-            return DEFECT
+            return Answer.DEFECT
 
     def update_memory(self, opponent, opponent_answer):
 
         prev_memory = self.memory.get(opponent.id, Memory.TRUSTWORTHY)
 
-        if opponent_answer == COOPERATE:
+        if opponent_answer == Answer.COOPERATE:
             self.memory[opponent.id] = Memory.TRUSTWORTHY
 
-        elif prev_memory == Memory.TRUSTWORTHY and opponent_answer == DEFECT:
+        elif prev_memory == Memory.TRUSTWORTHY and opponent_answer == Answer.DEFECT:
             self.memory[opponent.id] = Memory.HALF_TRUSTWORTHY
 
         else:
@@ -48,4 +48,4 @@ class ForgivingTitForTat(PlayerWithMemory):
 
 class SoRandom(Player):
     def answer(self, opponent):
-        return COOPERATE if randint(2) == 1 else DEFECT
+        return Answer.COOPERATE if randint(2) == 1 else Answer.DEFECT
