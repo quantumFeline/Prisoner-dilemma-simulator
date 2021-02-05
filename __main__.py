@@ -1,4 +1,4 @@
-import random
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -92,7 +92,7 @@ def simulate(quantities: list = None, rounds_to_play: int = 10):
     return aquarium.get_averages()
 
 
-def average_logs(logs, window_size):
+def average_logs(player_name, logs, window_size):
     game_logs_pd = pd.Series(logs[player_name])
     return game_logs_pd.rolling(window_size).mean()
 
@@ -106,29 +106,35 @@ for rounds in tqdm(range(MAX_ROUNDS)):
     for player_name in PLAYER_TYPE_NAMES:
         game_logs[player_name][rounds] = result.get(player_name, 0)
 
-fig, (ax, ax2) = plt.subplots(1, 2, figsize=(15, 5))
 
-for player_name in PLAYER_TYPE_NAMES:
-    ax.plot(range(MAX_ROUNDS), average_logs(game_logs, WINDOW), label=player_name + " averaged")
-    ax.scatter(range(MAX_ROUNDS)[::WINDOW], game_logs[player_name][::WINDOW], label=player_name)
+def draw_graphs():
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(15, 5))
 
-for player_name in PLAYER_TYPE_NAMES:
-    game_logs_normalised = {player_name: game_logs[player_name] / ([1] + list(range(1, MAX_ROUNDS)))
-                            for player_name in game_logs.keys()}
-    ax2.plot(range(MAX_ROUNDS), average_logs(game_logs_normalised, WINDOW),
-             label=player_name + " averaged and normalised")
+    for player_name in PLAYER_TYPE_NAMES:
+        ax.plot(range(MAX_ROUNDS), average_logs(player_name, game_logs, WINDOW), label=player_name + " averaged")
+        ax.scatter(range(MAX_ROUNDS)[::WINDOW], game_logs[player_name][::WINDOW], label=player_name)
 
-sup_title = f'Full results of aquarium simulation for {PLAYERS_N} players: {QUANTITIES} and {MAX_ROUNDS} max rounds'
-fig.suptitle(sup_title)
+    for player_name in PLAYER_TYPE_NAMES:
+        game_logs_normalised = {player_name: game_logs[player_name] / ([1] + list(range(1, MAX_ROUNDS)))
+                                for player_name in game_logs.keys()}
+        ax2.plot(range(MAX_ROUNDS), average_logs(player_name, game_logs_normalised, WINDOW),
+                 label=player_name + " averaged and normalised")
 
-ax.set_xlabel('Rounds played')
-ax.set_ylabel('Average scores')
-ax.legend()
+    sup_title = f'Full results of aquarium simulation for {PLAYERS_N} players: {QUANTITIES} and {MAX_ROUNDS} max rounds'
+    fig.suptitle(sup_title)
 
-ax2.set_xlabel('Rounds played')
-ax2.set_ylabel('Average score per round')
-ax2.legend()
+    ax.set_xlabel('Rounds played')
+    ax.set_ylabel('Average scores')
+    ax.legend()
 
-plt.tight_layout()
-plt.savefig(f'results/{sup_title}.png')
+    ax2.set_xlabel('Rounds played')
+    ax2.set_ylabel('Average score per round')
+    ax2.legend()
+
+    plt.tight_layout()
+    return sup_title, plt
+
+
+name, plt = draw_graphs()
+plt.savefig(f'results/{name}.png')
 plt.show()
