@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from settings import *
 from tqdm import tqdm
+from datetime import datetime
 
 
 class Automaton:
@@ -61,7 +62,7 @@ class Aquarium:
     def _get_sums(self):
         return self.sum_per_team
 
-    def play_random_rounds(self, rounds_to_play=1):
+    def play_random_rounds(self, rounds_to_play: int=1):
 
         for _ in range(rounds_to_play):
             players = np.random.choice(self.players, size=2, replace=False)
@@ -107,6 +108,14 @@ for rounds in tqdm(range(MAX_ROUNDS)):
         game_logs[player_name][rounds] = result.get(player_name, 0)
 
 
+def generate_titles(players_n: list, quantities: list, max_rounds: list):
+    player_str_list = "; ".join([f"{PLAYER_TYPE_NAMES[i]} - {quantities[i]}" for i in range(len(PLAYER_TYPE_NAMES))])
+    full_title = f"Results of aquarium simulation for {players_n} players and {max_rounds} max rounds\n" \
+                 f"Players list: {player_str_list}"
+    short_title = f"Results for {players_n} players and {max_rounds} rounds {datetime.now()}"
+    return {"short": short_title, "full": full_title}
+
+
 def draw_graphs():
     fig, (ax, ax2) = plt.subplots(1, 2, figsize=(15, 5))
 
@@ -120,7 +129,9 @@ def draw_graphs():
         ax2.plot(range(MAX_ROUNDS), average_logs(player_name, game_logs_normalised, WINDOW),
                  label=player_name + " averaged and normalised")
 
-    sup_title = f'Full results of aquarium simulation for {PLAYERS_N} players: {QUANTITIES} and {MAX_ROUNDS} max rounds'
+    titles = generate_titles(PLAYERS_N, QUANTITIES, MAX_ROUNDS)
+    sup_title = titles['full']
+    filename = titles['short']
     fig.suptitle(sup_title)
 
     ax.set_xlabel('Rounds played')
@@ -132,7 +143,7 @@ def draw_graphs():
     ax2.legend()
 
     plt.tight_layout()
-    return sup_title, plt
+    return filename, plt
 
 
 name, plt = draw_graphs()
