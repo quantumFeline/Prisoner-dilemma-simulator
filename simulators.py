@@ -6,17 +6,23 @@ class Automaton:
     """A class that organizes matches between players
     and updates their scores.
     """
-    DEFAULT_AWARDS = {(Answer.COOPERATE, Answer.COOPERATE): (3, 3),
-                      (Answer.COOPERATE, Answer.DEFECT): (0, 5),
-                      (Answer.DEFECT, Answer.COOPERATE): (5, 0),
-                      (Answer.DEFECT, Answer.DEFECT): (1, 1)}
+    DEFAULT_AWARDS = [0, 1, 3, 5]
 
-    def __init__(self, aquarium: 'Aquarium' = None, awards: dict = None) -> None:
+    @staticmethod
+    def set_awards(cd, dd, cc, dc):
+        return {(Answer.COOPERATE, Answer.COOPERATE): (cc, cc),
+                      (Answer.COOPERATE, Answer.DEFECT): (cd, dc),
+                      (Answer.DEFECT, Answer.COOPERATE): (dc, cd),
+                      (Answer.DEFECT, Answer.DEFECT): (dd, dd)}
+
+    def __init__(self, aquarium: 'Aquarium' = None, awards: list = None) -> None:
+
         if awards:
-            self.AWARDS = awards
+            awards_list = awards
         else:
-            self.AWARDS = Automaton.DEFAULT_AWARDS
+            awards_list = Automaton.DEFAULT_AWARDS
 
+        self.AWARDS = Automaton.set_awards(*awards_list)
         self.aquarium = aquarium
 
     def play_round(self, player1: Player, player2: Player):
@@ -31,7 +37,7 @@ class Automaton:
 
 class Aquarium:
 
-    def __init__(self, n=10, randomised=False, quantities=None, p=None):
+    def __init__(self, n=10, randomised=False, quantities=None, p=None, awards=None):
 
         if randomised:
             self.players = np.array([player() for player in np.random.choice(PLAYER_TYPES, size=n, p=p)])
@@ -52,7 +58,7 @@ class Aquarium:
         self.types_n = {player_name: sum([player.name() == player_name for player in self.players])
                         for player_name in PLAYER_TYPE_NAMES}
         self.rounds_played = 0
-        self.automaton = Automaton(aquarium=self)
+        self.automaton = Automaton(aquarium=self, awards=awards)
 
     def _get_sums(self):
         return self.sum_per_team

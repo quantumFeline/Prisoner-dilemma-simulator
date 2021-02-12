@@ -2,14 +2,16 @@ from player_types import *
 
 # Main parameters.
 
-PLAYER_TYPES = [Cooperator, Defector, TitForTat]
+PLAYER_TYPES = [Cooperator, Defector, TitForTat, SoRandom]
 MODE = Mode.QUANTITY
-MAX_ROUNDS = int(2e2)
+MAX_ROUNDS = int(5e2)
+# AWARDS = [0, 1, 2, 3]
+AWARDS = [0, 1, 3, 5]
 
 # Set up one, depending on mode. This determines the number of players in the game.
 # TODO: probability mode
 PROBABILITIES = [0.1, 0.2, 0.6, 0.1]
-QUANTITIES = [5, 5, 5]
+QUANTITIES = [5, 5, 5, 5]
 
 # Technical. Generally speaking, is not to be changed.
 PLAYER_TYPE_NAMES = [player().name() for player in PLAYER_TYPES]

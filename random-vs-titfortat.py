@@ -8,7 +8,7 @@ opponent = SoRandom()
 tit_for_tat = TitForTat()
 so_random = SoRandom()
 
-for rounds in tqdm(range(100)):
+for rounds in tqdm(range(1000)):
     automaton.play_round(opponent, tit_for_tat)
     automaton.play_round(opponent, so_random)
 

@@ -9,7 +9,7 @@ from simulators import Aquarium
 
 
 def simulate(quantities: list = None, rounds_to_play: int = 10):
-    aquarium = Aquarium(quantities=quantities)
+    aquarium = Aquarium(quantities=quantities, awards=AWARDS)
     aquarium.play_random_rounds(rounds_to_play=rounds_to_play)
     return aquarium.get_averages()
 
@@ -32,7 +32,7 @@ for rounds in tqdm(range(MAX_ROUNDS)):
 def generate_titles(players_n: list, quantities: list, max_rounds: list):
     player_str_list = "; ".join([f"{PLAYER_TYPE_NAMES[i]} - {quantities[i]}" for i in range(len(PLAYER_TYPE_NAMES))])
     full_title = f"Results of aquarium simulation for {players_n} players and {max_rounds} max rounds\n" \
-                 f"Players list: {player_str_list}"
+                 f"Players list: {player_str_list};     Awards: {AWARDS}"
     short_title = f"Results for {players_n} players and {max_rounds} rounds {datetime.now()}"
     return {"short": short_title, "full": full_title}
 
