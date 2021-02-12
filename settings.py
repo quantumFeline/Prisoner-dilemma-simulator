@@ -4,7 +4,7 @@ from player_types import *
 
 PLAYER_TYPES = [Cooperator, Defector, TitForTat]
 MODE = Mode.QUANTITY
-MAX_ROUNDS = int(2e3)
+MAX_ROUNDS = int(2e2)
 
 # Set up one, depending on mode. This determines the number of players in the game.
 # TODO: probability mode
